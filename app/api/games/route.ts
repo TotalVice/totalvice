@@ -1,30 +1,48 @@
 import { NextResponse } from "next/server";
 import { getCheapSharkDeals } from "@/services/cheapshark.service";
+import { getFreeGames } from "@/services/freetogame.service";
 
 export async function GET() {
   try {
-    const deals = await getCheapSharkDeals();
+    const [deals, freeGames] = await Promise.all([
+      getCheapSharkDeals(),
+      getFreeGames(),
+    ]);
 
-    const games = deals.map((game) => ({
-      id: game.gameID,
+    const cheapSharkGames = deals.map((game) => ({
+      id: `deal-${game.gameID}`,
       title: game.title,
       platform: "Steam",
       oldPrice: `$${game.normalPrice}`,
       newPrice: `$${game.salePrice}`,
       image: game.thumb,
       expires: "Oferta disponible",
+      source: "CheapShark",
+    }));
+
+    const freeToGameGames = freeGames.slice(0, 12).map((game) => ({
+      id: `free-${game.id}`,
+      title: game.title,
+      platform: game.platform,
+      oldPrice: "Gratis",
+      newPrice: "Gratis",
+      image: game.thumbnail,
+      expires: "Free to Play",
+      source: "FreeToGame",
     }));
 
     return NextResponse.json({
       success: true,
-      total: games.length,
-      games,
+      total: cheapSharkGames.length + freeToGameGames.length,
+      games: [...cheapSharkGames, ...freeToGameGames],
     });
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       {
         success: false,
-        message: "No se pudieron obtener las ofertas.",
+        message: "No se pudieron obtener los juegos.",
       },
       {
         status: 500,

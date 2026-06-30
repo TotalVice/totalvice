@@ -2,21 +2,30 @@
 
 import Section from "../ui/Section";
 import GameCard from "../ui/GameCard";
+import PlatformFilter from "./PlatformFilter";
 import { useGames } from "@/context/GameContext";
 
 export default function FeaturedGames() {
-  const { games, loading } = useGames();
+  const {
+    filteredGames,
+    loading,
+  } = useGames();
 
   return (
     <Section
-      title="🔥 Juegos Gratis Ahora"
-      subtitle="Las mejores promociones disponibles en este momento."
+      title="🎮 Juegos"
+      subtitle="Explora las mejores ofertas disponibles."
     >
+      <PlatformFilter />
+
       {loading ? (
-        <p className="text-slate-400">Cargando juegos...</p>
+        <p className="text-slate-400">
+          Cargando juegos...
+        </p>
       ) : (
         <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {games.map((game) => (
+
+          {filteredGames.map((game) => (
             <GameCard
               key={game.id}
               id={game.id}
@@ -28,6 +37,7 @@ export default function FeaturedGames() {
               expires={game.expires}
             />
           ))}
+
         </div>
       )}
     </Section>
