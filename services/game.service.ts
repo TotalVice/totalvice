@@ -1,15 +1,14 @@
+import { api } from "@/lib/api";
 import { Game } from "@/types/game";
 
+type GamesResponse = {
+  success: boolean;
+  total: number;
+  games: Game[];
+};
+
 export async function getGames(): Promise<Game[]> {
-  const response = await fetch("/api/games", {
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error("No se pudieron obtener los juegos.");
-  }
-
-  const data = await response.json();
+  const data = await api<GamesResponse>("/api/games");
 
   return data.games;
 }
