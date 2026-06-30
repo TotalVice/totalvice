@@ -17,6 +17,8 @@ type GameContextType = {
   filteredGames: Game[];
   loading: boolean;
   selectedPlatform: string;
+  search: string;
+  setSearch: (value: string) => void;
   setSelectedPlatform: (platform: string) => void;
   refreshGames: () => Promise<void>;
 };
@@ -26,6 +28,8 @@ const GameContext = createContext<GameContextType>({
   filteredGames: [],
   loading: true,
   selectedPlatform: "Todas",
+  search: "",
+  setSearch: () => {},
   setSelectedPlatform: () => {},
   refreshGames: async () => {},
 });
@@ -38,6 +42,7 @@ export function GameProvider({
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPlatform, setSelectedPlatform] = useState("Todas");
+  const [search, setSearch] = useState("");
 
   async function refreshGames() {
     setLoading(true);
@@ -57,14 +62,20 @@ export function GameProvider({
   }, []);
 
   const filteredGames = useMemo(() => {
-    if (selectedPlatform === "Todas") {
-      return games;
-    }
+    return games.filter((game) => {
+      const platformMatch =
+        selectedPlatform === "Todas" ||
+        game.platform
+          .toLowerCase()
+          .includes(selectedPlatform.toLowerCase());
 
-    return games.filter((game) =>
-      game.platform.toLowerCase().includes(selectedPlatform.toLowerCase())
-    );
-  }, [games, selectedPlatform]);
+      const searchMatch = game.title
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      return platformMatch && searchMatch;
+    });
+  }, [games, selectedPlatform, search]);
 
   return (
     <GameContext.Provider
@@ -73,6 +84,8 @@ export function GameProvider({
         filteredGames,
         loading,
         selectedPlatform,
+        search,
+        setSearch,
         setSelectedPlatform,
         refreshGames,
       }}
