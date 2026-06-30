@@ -12,6 +12,7 @@ export default function FeaturedGames() {
         {featuredGames.map((game) => (
           <GameCard
             key={game.id}
+            id={game.id}
             title={game.title}
             platform={game.platform}
             oldPrice={game.oldPrice}

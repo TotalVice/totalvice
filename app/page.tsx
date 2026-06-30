@@ -3,6 +3,7 @@ import Hero from "@/components/home/Hero";
 import Stats from "@/components/home/Stats";
 import Platforms from "@/components/home/Platforms";
 import FeaturedGames from "@/components/home/FeaturedGames";
+import Footer from "@/components/layout/Footer";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <Stats />
       <Platforms />
       <FeaturedGames />
+      <Footer />
     </main>
   );
 }
